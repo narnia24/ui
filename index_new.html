@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Human Detection</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-image: url("https://img.freepik.com/free-vector/gradient-brain-background_23-2150516335.jpg");
+      background-size: cover;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 100px auto;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    input[type="file"] {
+      margin: 20px 0;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    .response {
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    .success {
+      color: #28a745;
+    }
+    .error {
+      color: #dc3545;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Human Detection</h1>
+    <form id="upload-form">
+      <input type="file" id="file" name="file" accept="image/*" required />
+      <br>
+      <button type="submit">Upload and Detect</button>
+    </form>
+    <div id="response" class="response"></div>
+  </div>
+
+  <script>
+    document.getElementById("upload-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      fetch("/upload", {
+        method: "POST",
+        body: formData,
+      })
+      .then(response => response.json())
+      .then(data => {
+        const responseDiv = document.getElementById("response");
+        if (data.success) {
+          responseDiv.innerHTML = `
+            <p class="success">${data.message}</p>
+            <p>Humans Present: ${data.human_present}</p>
+          `;
+        } else {
+          responseDiv.innerHTML = `<p class="error">${data.message}</p>`;
+        }
+      })
+      .catch(error => {
+        document.getElementById("response").innerHTML = `<p class="error">Error: ${error.message}</p>`;
+      });
+    });
+  </script>
+</body>
+</html>
